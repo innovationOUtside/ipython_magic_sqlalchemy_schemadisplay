@@ -23,7 +23,7 @@ class SchemaDisplayMagic(Magics):
         
         parser = ArgumentParser()
         parser.add_argument('-c', '--connection_string', default=None)
-        parser.add_argument('-i', '--include_tables', default=None)
+        parser.add_argument('-t', '--include_tables', default=None)
         parser.add_argument('-k', '--show_column_keys', action='store_false')
         parser.add_argument('-d', '--show_datatypes', action='store_false')
         
