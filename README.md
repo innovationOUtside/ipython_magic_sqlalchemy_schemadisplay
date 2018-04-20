@@ -1,0 +1,2 @@
+# ipython_magic_sqlalchemy_schemadisplay
+Magic for sqlalchemy_schemadisplay
