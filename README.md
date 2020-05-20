@@ -19,7 +19,7 @@ Note there are several other dependencies:
 - Python: see *requirements.txt*
 - O/S: see *apt.txt*
 
-Set up a database. FOr example, load the SQL magic:
+Set up a database. For example, load the SQL magic:
 
 ```python
 %load_ext sql
@@ -72,4 +72,13 @@ Load the schema display magic, and render the schema from the connected database
 %schema --connection_string $DB_CONNECTION
 ```
 
+<img src='example_erd.png' width=500/>
+
 At the moment, the database connection string needs to be provided to the schem magic for each diagram. [TO DO - fix this to use a single persistemt connection for the life of the notebook session, once connected.]
+
+
+## Using the Magic in a Teaching and Learning Context
+
+The magic was developed to support teaching and learning around the topic of *relational databases*. Students were working with a PostgreSQL database, creating, editing and deleting tables, and creating foreign key relationships between tables. The magic provided an easy way to visualise the current state of the tables available in the database, and any foreign key relationships between them.
+
+In this way, students could run database and table modifying statements in a notebook. A single line magic invocation could then be used to generate a visual representation of the current state of the database to check that their intended changes had worked correctly.
