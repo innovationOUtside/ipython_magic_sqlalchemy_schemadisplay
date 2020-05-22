@@ -3,7 +3,7 @@ Magic for [sqlalchemy_schemadisplay](https://github.com/fschulze/sqlalchemy_sche
 
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/innovationOUtside/ipython_magic_sqlalchemy_schemadisplay/master?filepath=notebooks/SchemaDemo.ipynb)
 
-Magic originally created for the Open University module [TM351 Data Management and Analysis](http://www.open.ac.uk/courses/modules/tm351). This magic complements the [`ipython-sql`](https://github.com/catherinedevlin/ipython-sql), which provides magics for connecting to a SQL database, with a magic that uses [sqlalchemy_schemadisplay](https://github.com/fschulze/sqlalchemy_schemadisplay) to generate ERDs over a SQL database.
+Magic originally created for the Open University module [TM351 Data Management and Analysis](http://www.open.ac.uk/courses/modules/tm351). This magic complements the [`ipython-sql`](https://github.com/catherinedevlin/ipython-sql), which provides magics for connecting to a SQL database, with a magic that uses [sqlalchemy_schemadisplay](https://github.com/fschulze/sqlalchemy_schemadisplay) to generate ERDs over a SQL database. *The code for generating the ER diagram can be found in the third party `sqlalchemy_schemadisplay` package.*
 
 At the moment, the schema display and `ipython-sql` magics and independent, but they really should be combined into a single package.
 
