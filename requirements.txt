@@ -1,3 +1,4 @@
 pandas
 git+https://github.com/fschulze/sqlalchemy_schemadisplay.git
-git+https://github.com/catherinedevlin/ipython-sql
+ipython-sql
+#git+https://github.com/catherinedevlin/ipython-sql
