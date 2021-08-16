@@ -9,6 +9,7 @@ At the moment, the schema display and `ipython-sql` magics and independent, but 
 
 ## Usage
 
+Install from PyPi: `pip install schemadisplay-magic`
 
 Install from this repo:
 
