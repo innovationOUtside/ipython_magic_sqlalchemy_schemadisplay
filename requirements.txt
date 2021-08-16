@@ -1,4 +1,8 @@
 pandas
-git+https://github.com/fschulze/sqlalchemy_schemadisplay.git
+sqlalchemy
 ipython-sql
-#git+https://github.com/catherinedevlin/ipython-sql
+pydot
+graphviz
+
+# Now included in package src
+#git+https://github.com/fschulze/sqlalchemy_schemadisplay.git
