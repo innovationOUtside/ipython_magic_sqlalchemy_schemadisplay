@@ -33,7 +33,7 @@ class SchemaDisplayMagic(Magics):
         
         include_tables = [i for i in reader([args.include_tables])][0] if args.include_tables is not None else None
         
-        graph = create_schema_graph(metadata=MetaData(args.connection_string),
+        graph = create_schema_graph(connection_string=args.connection_string,
             show_datatypes=args.show_datatypes, # The image would get nasty big if we'd show the datatypes
             show_indexes=False, # ditto for indexes
             rankdir='LR', # From left to right (instead of top to bottom),

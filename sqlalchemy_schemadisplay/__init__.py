@@ -1,5 +1,8 @@
 #Include from: https://github.com/fschulze/sqlalchemy_schemadisplay/
+# updated SQLA schema display to work with pydot 1.0.2
 
+from packaging import version
+from sqlalchemy import __version__ as sqlaver
 from sqlalchemy.orm.properties import RelationshipProperty
 from sqlalchemy.orm import sync
 import pydot
@@ -106,7 +109,7 @@ from sqlalchemy import Table, text, ForeignKeyConstraint
 
 
 def _render_table_html(
-    table, metadata,
+    session, table,
     show_indexes, show_datatypes, show_column_keys, show_schema_name,
     format_schema_name, format_table_name
 ):
@@ -168,9 +171,9 @@ def _render_table_html(
     )
 
     html += ''.join('<TR><TD ALIGN="LEFT" PORT="%s">%s</TD></TR>' % (col.name, format_col_str(col)) for col in table.columns)
-    if metadata.bind and isinstance(metadata.bind.dialect, PGDialect):
+    if session.bind and isinstance(session.bind.dialect, PGDialect):
         # postgres engine doesn't reflect indexes
-        indexes = dict((name,defin) for name,defin in metadata.bind.execute(
+        indexes = dict((name,defin) for name,defin in session.bind.execute(
             text("SELECT indexname, indexdef FROM pg_indexes WHERE tablename = '%s'" % table.name)
         ))
         if indexes and show_indexes:
@@ -182,11 +185,17 @@ def _render_table_html(
     html += '</TABLE>>'
     return html
 
-def create_schema_graph(tables=None, metadata=None, show_indexes=True, show_datatypes=True, font="Bitstream-Vera Sans",
-    concentrate=True, relation_options={}, rankdir='TB', show_column_keys=False, restrict_tables=None,
-    show_schema_name=False, format_schema_name=None, format_table_name=None):
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy import MetaData
+from sqlalchemy import create_engine
+
+def create_schema_graph(connection_string=None, session=None, tables=None, metadata=None, show_indexes=True,
+    show_datatypes=True, font="Bitstream-Vera Sans", concentrate=True, relation_options={}, rankdir='TB',
+    show_column_keys=False, restrict_tables=None, show_schema_name=False, format_schema_name=None, format_table_name=None):
     """
     Args:
+      - connection_string: database connection string.
+      - session (sqlalchemy.orm.session.Session): A database session.
       - metadata (sqlalchemy.MetaData, default=None): SqlAlchemy `MetaData` with reference to related tables.  If none
         is provided, uses metadata from first entry of `tables` argument.
       - concentrate (bool, default=True): Specifies if multiedges should be merged into a single edge & partially
@@ -215,12 +224,23 @@ def create_schema_graph(tables=None, metadata=None, show_indexes=True, show_data
 
     if metadata is None and tables is not None and len(tables):
         metadata = tables[0].metadata
-    elif tables is None and metadata is not None:
-        if not len(metadata.tables):
-            metadata.reflect()
+    elif connection_string is not None and metadata is None and tables is None:
+        #https://docs.sqlalchemy.org/en/20/changelog/migration_20.html#implicit-and-connectionless-execution-bound-metadata-removed
+        engine = create_engine(connection_string, echo=False)
+        metadata = MetaData()
+        metadata.reflect(engine)
+        # Construct a sessionmaker object
+        session_factory = sessionmaker(autocommit=False, autoflush=False, bind=engine, future=True)
+        session = session_factory()
         tables = metadata.tables.values()
     else:
-        raise ValueError("You need to specify at least tables or metadata")
+        raise ValueError("You need to specify at least tables or metadata or a connection string")
+
+    if session is None:
+        if version.parse(sqlaver) >= version.parse('2.0.0'):
+            raise ValueError("You need to set up and provide a database session with sqlalchemy >= 2")
+        else:
+            session = metadata
 
     # check if unexpected keys were used in format_schema_name param
     if format_schema_name is not None and \
@@ -242,7 +262,7 @@ def create_schema_graph(tables=None, metadata=None, show_indexes=True, show_data
         graph.add_node(pydot.Node(str(table.name),
             shape="plaintext",
             label=_render_table_html(
-                table, metadata,
+                session, table,
                 show_indexes, show_datatypes, show_column_keys, show_schema_name,
                 format_schema_name, format_table_name
             ),
@@ -274,7 +294,10 @@ def create_schema_graph(tables=None, metadata=None, show_indexes=True, show_data
 #            if fk.column.table.name not in graph.edge_dst_list:
 #                graph.edge_dst_list.append(fk.column.table.name)
 #            graph.sorted_graph_elements.append(graph_edge)
+    session.close()
+    
     return graph
+
 
 def show_uml_graph(*args, **kwargs):
     from cStringIO import StringIO
