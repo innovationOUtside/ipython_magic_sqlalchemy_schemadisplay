@@ -173,9 +173,9 @@ def _render_table_html(
     html += ''.join('<TR><TD ALIGN="LEFT" PORT="%s">%s</TD></TR>' % (col.name, format_col_str(col)) for col in table.columns)
     if session.bind and isinstance(session.bind.dialect, PGDialect):
         # postgres engine doesn't reflect indexes
-        indexes = dict((name,defin) for name,defin in session.bind.execute(
-            text("SELECT indexname, indexdef FROM pg_indexes WHERE tablename = '%s'" % table.name)
-        ))
+        with session.bind.connect() as conn:
+            result = conn.execute(text("SELECT indexname, indexdef FROM pg_indexes WHERE tablename = '%s'" % table.name))
+        indexes = dict((name,defin) for name,defin in result)
         if indexes and show_indexes:
             html += '<TR><TD BORDER="1" CELLPADDING="0"></TD></TR>'
             for index, defin in indexes.items():
