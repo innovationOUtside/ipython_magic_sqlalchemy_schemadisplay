@@ -1,6 +1,7 @@
 pandas
 sqlalchemy
-ipython-sql
+#ipython-sql #do we actually need this for the extension?
+#jupysql #replaces ipython-sql
 pydot
 graphviz
 
