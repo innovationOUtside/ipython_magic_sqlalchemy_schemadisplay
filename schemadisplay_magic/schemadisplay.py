@@ -5,6 +5,8 @@ from IPython.core.display import Image, HTML, SVG
 
 from argparse import ArgumentParser
 import shlex
+import configparser
+import os
 
 from csv import reader
 from sqlalchemy import MetaData
@@ -22,6 +24,7 @@ class SchemaDisplayMagic(Magics):
         '''Format.'''
         
         parser = ArgumentParser()
+        parser.add_argument('-D', '--database_config', default=None)
         parser.add_argument('-c', '--connection_string', default=None)
         parser.add_argument('-t', '--include_tables', default=None)
         parser.add_argument('-k', '--show_column_keys', action='store_false')
@@ -29,11 +32,27 @@ class SchemaDisplayMagic(Magics):
         
         args = parser.parse_args(shlex.split(line))
         
-        if args.connection_string is None: return
+        if args.connection_string is None and args.database_config is None:
+            return
         
         include_tables = [i for i in reader([args.include_tables])][0] if args.include_tables is not None else None
         
-        graph = create_schema_graph(connection_string=args.connection_string,
+        if args.connection_string:
+            connection_string = args.connection_string
+        else:
+            # Create a connection string from settings
+            config = configparser.ConfigParser()
+            if not "HOME" in os.environ:
+                print("Can't find $HOME environment variable.")
+                return
+            config.read(f'{os.environ["HOME"]}/.jupysql/connections.ini')
+            if not config.sections() or args.database_config not in config.sections():
+                print(f"Issue location {args.database_config} in ~/.jupysql/connections.ini")
+                return
+            else:
+                connection_string = "{drivername}://{username}:{password}@{host}:{port}/{database}".format(**config["pg"])
+
+        graph = create_schema_graph(connection_string=connection_string,
             show_datatypes=args.show_datatypes, # The image would get nasty big if we'd show the datatypes
             show_indexes=False, # ditto for indexes
             rankdir='LR', # From left to right (instead of top to bottom),
