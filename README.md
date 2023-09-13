@@ -20,6 +20,11 @@ Note there are several other dependencies:
 - Python: see *requirements.txt*
 - O/S: see *apt.txt*
 
+*Install either `ipython-sql` or `jupysql` to access the `$%sql` magic*:
+
+- either `ipython-sql`, or
+- `pip install jupysql`
+
 Set up a database. For example, load the SQL magic:
 
 ```python
@@ -28,14 +33,20 @@ Set up a database. For example, load the SQL magic:
 
 Create a database connection string — we can use a SQLite database for demo purposes — and connect the SQL magic to the database:
 
-```
+```python
+# With ipython-sql:
 DB_CONNECTION = 'sqlite:///./test.db'
 %sql $DB_CONNECTION
+
+# With jupysql:
+from sqlalchemy import create_engine
+engine = create_engine(DB_CONNECTION)
+%sql engine
 ```
 
 Populate the database with a couple of foreign key related tables:
 
-```
+```text
 %%sql
 
 DROP TABLE IF EXISTS doctor;
@@ -68,12 +79,15 @@ CREATE TABLE patient (
 ```
 
 Load the schema display magic, and render the schema from the connected database:
+
 ```python
 %load_ext schemadisplay_magic
 %schema --connection_string $DB_CONNECTION
 ```
 
 <img src='example_erd.png' width=500/>
+
+Alternatively, use a `jupysql` connections file (`~/.jupysql/connections.ini`): `%schema --connection_string $DB_CONNECTION`
 
 At the moment, the database connection string needs to be provided to the schem magic for each diagram. [TO DO - fix this to use a single persistemt connection for the life of the notebook session, once connected.]
 
