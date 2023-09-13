@@ -87,7 +87,7 @@ Load the schema display magic, and render the schema from the connected database
 
 <img src='example_erd.png' width=500/>
 
-Alternatively, use a `jupysql` connections file (`~/.jupysql/connections.ini`): `%schema --connection_string $DB_CONNECTION`
+Alternatively, use a `jupysql` connections file (`~/.jupysql/connections.ini`): `%sql --section mydb`
 
 At the moment, the database connection string needs to be provided to the schem magic for each diagram. [TO DO - fix this to use a single persistemt connection for the life of the notebook session, once connected.]
 
