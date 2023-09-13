@@ -50,8 +50,8 @@ class SchemaDisplayMagic(Magics):
                 print(f"Error: can't find {args.database_config} in ~/.jupysql/connections.ini")
                 return
             else:
-                connection_string = "{drivername}://{username}:{password}@{host}:{port}/{database}".format(**config["pg"])
-                print(f"Using connection string: {connection_string}")
+                connection_string = "{drivername}://{username}:{password}@{host}:{port}/{database}".format(**config[args.database_config])
+                #print(f"Using connection string: {connection_string}")
         graph = create_schema_graph(connection_string=connection_string,
             show_datatypes=args.show_datatypes, # The image would get nasty big if we'd show the datatypes
             show_indexes=False, # ditto for indexes
