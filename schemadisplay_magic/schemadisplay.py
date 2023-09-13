@@ -37,7 +37,7 @@ class SchemaDisplayMagic(Magics):
         
         include_tables = [i for i in reader([args.include_tables])][0] if args.include_tables is not None else None
         
-        if args.connection_string:
+        if args.connection_string is not None:
             connection_string = args.connection_string
         else:
             # Create a connection string from settings
@@ -47,11 +47,11 @@ class SchemaDisplayMagic(Magics):
                 return
             config.read(f'{os.environ["HOME"]}/.jupysql/connections.ini')
             if not config.sections() or args.database_config not in config.sections():
-                print(f"Issue location {args.database_config} in ~/.jupysql/connections.ini")
+                print(f"Error: can't find {args.database_config} in ~/.jupysql/connections.ini")
                 return
             else:
                 connection_string = "{drivername}://{username}:{password}@{host}:{port}/{database}".format(**config["pg"])
-
+                print(f"Using connection string: {connection_string}")
         graph = create_schema_graph(connection_string=connection_string,
             show_datatypes=args.show_datatypes, # The image would get nasty big if we'd show the datatypes
             show_indexes=False, # ditto for indexes
