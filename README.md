@@ -97,3 +97,7 @@ At the moment, the database connection string needs to be provided to the schem 
 The magic was developed to support teaching and learning around the topic of *relational databases*. Students were working with a PostgreSQL database, creating, editing and deleting tables, and creating foreign key relationships between tables. The magic provided an easy way to visualise the current state of the tables available in the database, and any foreign key relationships between them.
 
 In this way, students could run database and table modifying statements in a notebook. A single line magic invocation could then be used to generate a visual representation of the current state of the database to check that their intended changes had worked correctly.
+
+## SEE ALSO
+
+The `eralchemy` package now also supports the generation of dot script from SQL db connections. We can add a magic wrapper around this, and also use a WASM based graphviz package to create a new magic — eg Example here: https://github.com/innovationOUtside/erlachemy_schemadisplay_anywidget_magic — which uses `eralchemy` and a graphviz wasm anywidget to render the dot to SVG within the browser (no o/s installation of graphviz required).
